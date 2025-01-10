@@ -6,11 +6,22 @@ import Lookup from '@/data/Lookup'
 import { ArrowRight, Link } from 'lucide-react'
 import Colors from '@/data/Colors'
 import { MessagesContext } from '@/context/MessagesContext'
+import { UserDetailContext } from '@/context/UserDetailContext'
+
+import dynamic from 'next/dynamic';
+
+const SignInDialog = dynamic(() => import('./SignInDialog'), { ssr: false });
 
 function Hero() {
     const [userInput , setUserInput] = useState();
     const {messages,setMessages} = useContext(MessagesContext)
+    const {userDetail,setUserDetail} = useContext(UserDetailContext)
+    const [openDialog,setOpenDialog] = useState(false);
     const onGenerate=(input)=>{
+        if(!userDetail?.name){
+            setOpenDialog(true);
+            return ;
+        }
         setMessages({
             role:'user',
             content:input
@@ -31,7 +42,7 @@ function Hero() {
                     onChange={(event)=>setUserInput(event.target.value)}
                     className='outline-none bg-transparent w-full h-32 max-h-56 resize-none'
                 />
-               {userInput && <ArrowRight className='bg-blue-500 p-2 h-8 w-8 rounded-md cursor-pointer'/>}
+               {userInput && <ArrowRight onClick={()=>onGenerate(userInput)} className='bg-blue-500 p-2 h-8 w-8 rounded-md cursor-pointer'/>}
             </div>
             <div>
                 <Link className='h-5 w-5'/>
@@ -44,6 +55,7 @@ function Hero() {
                      >{suggestion}</h2>
                 ))}
         </div>
+        <SignInDialog openDialog={openDialog} closeDialog={(v)=>setOpenDialog(v)}/>
    </div>
   )
 }
