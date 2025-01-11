@@ -1,4 +1,5 @@
 
+import ConvexClientProvider from "./ConvexClientProvider";
 import "./globals.css";
 import Provider from "./provider";
 import Header from "@/components/ui/custom/Header";
@@ -16,10 +17,12 @@ export default function RootLayout({ children }) {
       <body
       
       >
+        <ConvexClientProvider>
         <Provider>
           <Header/>
           {children}
         </Provider>
+        </ConvexClientProvider>
         
       </body>
     </html>
