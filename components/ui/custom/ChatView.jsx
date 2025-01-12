@@ -6,11 +6,12 @@ import Colors from '@/data/Colors';
 import Lookup from '@/data/Lookup';
 import Prompt from '@/data/Prompt';
 import axios from 'axios';
-import { useConvex } from 'convex/react';
+import { useConvex, useMutation } from 'convex/react';
 import { ArrowRight, Link, Loader2Icon } from 'lucide-react';
 import Image from 'next/image';
 import { useParams } from 'next/navigation'
 import React, { useContext, useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 function ChatView() {
     const {id} = useParams();
@@ -19,6 +20,8 @@ function ChatView() {
     const {userDetail,setUserDetail} = useContext(UserDetailContext)
     const [userInput,setUserInput] = useState()
     const [loading,setLoading] = useState()
+
+    const UpdateMessages = useMutation(api.workspace.UpdateMessages)
 
     useEffect(()=>{
         id && GetWorkspaceData()
@@ -47,11 +50,16 @@ function ChatView() {
         const result = await axios.post('/api/ai-chat',{
             prompt:PROMPT 
         })
-        console.log(result.data.result)
-        setMessages(prev=>[...prev,{
+        
+        const airesp={
             role:'ai',
             content:result.data.result
-        }])
+        }
+        setMessages(prev=>[...prev,airesp])
+        await UpdateMessages({
+            messages:[...messages,airesp],
+            workspaceId:id
+        })
         setLoading(false)
     }
 
@@ -59,19 +67,20 @@ function ChatView() {
         setMessages(prev=>[...prev,{
             role:'user',
             content:input
-        }])
+        }]);
+        setUserInput('')
     }
 
 
   return (
     <div className='relative h-[85vh] flex flex-col'>
-        <div className='flex-1 overflow-y-scroll'>
+        <div className='flex-1 overflow-y-scroll scrollbar-hide'>
             {messages?.map((msg,index)=>(
                 <div key={index} className='p-3 rounded-lg mb-2 flex gap-2 items-center leading-7' style={{
                     backgroundColor:Colors.CHAT_BACKGROUND
                 }}>
                     {msg?.role=='user' && <Image src={userDetail?.picture} alt='userImage' width={35} height={35} className='rounded-full'/>}
-                    <h2>{msg.content}</h2>
+                    <ReactMarkdown className='flex flex-col'>{msg.content}</ReactMarkdown>
                    
                 </div>
             ))}
@@ -89,6 +98,7 @@ function ChatView() {
         }}>
             <div className='flex gap-2'>
                 <textarea placeholder={Lookup.INPUT_PLACEHOLDER}
+                    value={userInput}
                     onChange={(event)=>setUserInput(event.target.value)}
                     className='outline-none bg-transparent w-full h-32 max-h-56 resize-none'
                 />
