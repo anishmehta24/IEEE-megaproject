@@ -44,7 +44,7 @@ function Provider({ children }) {
         </NextThemesProvider>
         </MessagesContext.Provider>
         </UserDetailContext.Provider>
-        </GoogleOAuthProvider>;
+        </GoogleOAuthProvider>
        
     </div>
   )
