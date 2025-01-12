@@ -4,6 +4,8 @@ import { UserDetailContext } from '@/context/UserDetailContext';
 import { api } from '@/convex/_generated/api';
 import Colors from '@/data/Colors';
 import Lookup from '@/data/Lookup';
+import Prompt from '@/data/Prompt';
+import axios from 'axios';
 import { useConvex } from 'convex/react';
 import { ArrowRight, Link } from 'lucide-react';
 import Image from 'next/image';
@@ -29,6 +31,28 @@ function ChatView() {
         console.log(result)
 
     }
+
+     useEffect(()=>{
+        if(messages?.length>0){
+            const role = messages[messages?.length-1].role;
+            if(role=='user')
+            GetAiResponse()
+        }
+     },[messages])
+
+    const GetAiResponse=async()=>{
+        const PROMPT = JSON.stringify(messages)+Prompt.CHAT_PROMPT
+        const result = await axios.post('/api/ai-chat',{
+            prompt:PROMPT 
+        })
+        console.log(result.data.result)
+        setMessages(prev=>[...prev,{
+            role:'ai',
+            content:result.data.result
+        }])
+    }
+
+
   return (
     <div className='relative h-[85vh] flex flex-col'>
         <div className='flex-1 overflow-y-scroll'>
