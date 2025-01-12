@@ -11,7 +11,7 @@ import Lookup from '@/data/Lookup';
 
 function CodeView() {
   const [activeTab, setActiveTab] = useState('code');
-  
+  const [files,setFiles] = useState(Lookup?.DEFAULT_FILE)
   return (
     <div>
       <div className='bg-[#181818] w-full p-2 border'>
@@ -25,11 +25,16 @@ function CodeView() {
           
         </div>
       </div>
-      <SandpackProvider template="react" theme={'dark'}
+      <SandpackProvider 
+      files={files}
+      template="react" theme={'dark'}
         customSetup={{
           dependencies:{
             ...Lookup.DEPENDANCY
           }
+        }}
+        options={{
+          externalResources:['https://cdn.tailwindcss.com']
         }}
       >
         <SandpackLayout>
