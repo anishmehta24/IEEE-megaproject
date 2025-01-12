@@ -38,7 +38,7 @@ function Hero() {
             messages:[msg]
         })
         console.log(workspaceId)
-        router.push('/workspace'+workspaceId)
+        router.push('/workspace/'+workspaceId)
     }
 
 
