@@ -50,7 +50,7 @@ function ChatView() {
             prompt:PROMPT 
 
         },{
-            timeout:10000
+            timeout:60000
         })
         
         const airesp={
