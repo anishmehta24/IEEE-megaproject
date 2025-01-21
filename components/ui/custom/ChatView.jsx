@@ -48,6 +48,9 @@ function ChatView() {
         const PROMPT = JSON.stringify(messages)+Prompt.CHAT_PROMPT
         const result = await axios.post('/api/ai-chat',{
             prompt:PROMPT 
+
+        },{
+            timeout:10000
         })
         
         const airesp={
